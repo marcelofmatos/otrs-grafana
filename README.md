@@ -1,9 +1,9 @@
-# Grafana e OTRS v5
+# Grafana e OTRS
 
 Dashboards configuradas para visualização dos dados do OTRS 
 
 # Requisitos
-* OTRS v5 (não foi testado na v6)
+* OTRS v5 ou superior
 * Módulo Enquete instalado
 * Enquete ativa e marcada como 'Master'
 * Grafana v5
