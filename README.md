@@ -3,7 +3,7 @@
 Dashboards configuradas para visualização dos dados do OTRS 
 
 # Requisitos
-* OTRS v5 ou superior
+* OTRS com addon Survey v4 ou superior
 * Módulo Enquete instalado
 * Enquete ativa e marcada como 'Master'
 * Grafana v5
