@@ -376,7 +376,7 @@
         {
           "alias": "",
           "format": "time_series",
-          "rawSql": "SELECT\n  UNIX_TIMESTAMP(sv.create_time) as time_sec,\n  count(vote_value) as value,\n  answer as metric\nFROM survey_vote sv\nJOIN survey_answer sa ON (sv.vote_value=sa.id)\nJOIN survey_question sq ON (sq.id=sv.question_id)\nJOIN survey_request sr ON (sr.id=sv.request_id)\nJOIN ticket t ON (t.id=sr.ticket_id)\nJOIN users u ON (t.user_id=u.id)\nWHERE\n$__timeFilter(sv.create_time)\nAND sq.question IN ($questao)\nAND u.login = \"$atendente\"\nGROUP BY vote_value\nORDER BY sa.position",
+          "rawSql": "SELECT\n  UNIX_TIMESTAMP(sv.create_time) as time_sec,\n  count(vote_value) as value,\n  CASE sq.question_type\n    WHEN 'Radio'\n    THEN sa.answer \n    WHEN 'Textarea'\n    THEN REPLACE(sv.vote_value,'$html/text$','')\n    ELSE sv.vote_value\n  END as metric\nFROM survey_vote sv\nLEFT JOIN survey_answer sa ON (sv.vote_value=sa.id)\nJOIN survey_question sq ON (sq.id=sv.question_id)\nJOIN survey_request sr ON (sr.id=sv.request_id)\nJOIN ticket t ON (t.id=sr.ticket_id)\nJOIN users u ON (t.user_id=u.id)\nWHERE\n$__timeFilter(sv.create_time)\nAND sq.question IN ($questao)\nAND u.login = \"$atendente\"\nGROUP BY vote_value\nORDER BY sa.position",
           "refId": "A"
         }
       ],
@@ -499,7 +499,7 @@
         {
           "alias": "",
           "format": "table",
-          "rawSql": "SELECT\n  t.tn,\n  t.title,\n  sa.answer\nFROM survey_vote sv\nJOIN survey_answer sa ON (sv.vote_value=sa.id)\nJOIN survey_question sq ON (sq.id=sv.question_id)\nJOIN survey_request sr ON (sv.request_id=sr.id)\nJOIN ticket t ON (t.id=sr.ticket_id)\nJOIN users u ON (u.id=t.user_id)\nWHERE\n$__timeFilter(sv.create_time)\nAND\nsq.question IN ($questao)\nAND\nu.login = \"$atendente\"\nORDER BY t.tn DESC",
+          "rawSql": "SELECT\n  t.tn,\n  t.title,\n  CASE sq.question_type\n    WHEN 'Radio'\n    THEN sa.answer \n    WHEN 'Textarea'\n    THEN REPLACE(sv.vote_value,'$html/text$','')\n    ELSE sv.vote_value\n  END as answer\nFROM survey_vote sv\nLEFT JOIN survey_answer sa ON (sv.vote_value=sa.id)\nJOIN survey_question sq ON (sq.id=sv.question_id)\nJOIN survey_request sr ON (sv.request_id=sr.id)\nJOIN ticket t ON (t.id=sr.ticket_id)\nJOIN users u ON (u.id=t.user_id)\nWHERE\n$__timeFilter(sv.create_time)\nAND\nsq.question IN ($questao)\nAND\nu.login = \"$atendente\"\nORDER BY t.tn DESC",
           "refId": "A"
         }
       ],

@@ -452,7 +452,7 @@
         {
           "alias": "",
           "format": "time_series",
-          "rawSql": "SELECT\n  UNIX_TIMESTAMP(sv.create_time) as time_sec,\n  count(vote_value) as value,\n  answer as metric\nFROM survey_vote sv\nJOIN survey_answer sa ON (sv.vote_value=sa.id)\nJOIN survey_question sq ON (sq.id=sv.question_id)\nWHERE\n$__timeFilter(sv.create_time)\nAND sq.question = $questao\nGROUP BY vote_value\nORDER BY sa.position\n",
+          "rawSql": "SELECT\n  UNIX_TIMESTAMP(sv.create_time) as time_sec,\n  count(vote_value) as value,\n  CASE sq.question_type\n    WHEN 'Radio'\n    THEN sa.answer \n    WHEN 'Textarea'\n    THEN REPLACE(sv.vote_value,'$html/text$','')\n    ELSE sv.vote_value\n  END as metric\nFROM survey_vote sv\nLEFT JOIN survey_answer sa ON (sv.vote_value=sa.id)\nJOIN survey_question sq ON (sq.id=sv.question_id)\nWHERE\n$__timeFilter(sv.create_time)\nAND sq.question = $questao\nGROUP BY vote_value\nORDER BY sa.position\n",
           "refId": "A"
         }
       ],
@@ -510,7 +510,7 @@
         },
         {
           "alias": "Avaliação",
-          "colorMode": "cell",
+          "colorMode": null,
           "colors": [
             "rgba(50, 172, 45, 0.97)",
             "rgba(237, 129, 40, 0.89)",
@@ -523,8 +523,7 @@
           "preserveFormat": false,
           "sanitize": false,
           "thresholds": [
-            "Ótimo",
-            " Bom"
+            ""
           ],
           "type": "string",
           "unit": "short"
@@ -582,7 +581,7 @@
         {
           "alias": "",
           "format": "table",
-          "rawSql": "SELECT\n  t.tn,\n  t.title,\n  q.name,\n  sa.answer\nFROM survey_vote sv\nJOIN survey_answer sa ON (sv.vote_value=sa.id)\nJOIN survey_question sq ON (sq.id=sv.question_id)\nJOIN survey_request sr ON (sv.request_id=sr.id)\nJOIN ticket t ON (t.id=sr.ticket_id)\nJOIN queue q ON (t.queue_id=q.id)\nWHERE\n$__timeFilter(sv.create_time)\nAND\nsq.question IN ($questao)\nORDER BY sa.position, t.tn DESC",
+          "rawSql": "SELECT\n  t.tn,\n  t.title,\n  q.name,\n  CASE sq.question_type\n    WHEN 'Radio'\n    THEN sa.answer \n    WHEN 'Textarea'\n    THEN REPLACE(sv.vote_value,'$html/text$','')\n    ELSE sv.vote_value\n  END as answer\nFROM survey_vote sv\nLEFT JOIN survey_answer sa ON (sv.vote_value=sa.id)\nJOIN survey_question sq ON (sq.id=sv.question_id)\nJOIN survey_request sr ON (sv.request_id=sr.id)\nJOIN ticket t ON (t.id=sr.ticket_id)\nJOIN queue q ON (t.queue_id=q.id)\nWHERE\n$__timeFilter(sv.create_time)\nAND\nsq.question IN ($questao)\nORDER BY sa.position, t.tn DESC",
           "refId": "A"
         }
       ],
