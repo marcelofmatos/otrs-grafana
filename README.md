@@ -4,9 +4,8 @@ Dashboards configuradas para visualização dos dados do OTRS
 
 # Requisitos
 * OTRS com addon Survey v4 ou superior
-* Módulo Enquete instalado
 * Enquete ativa e marcada como 'Master'
-* Grafana v5
+* Grafana v5 ou superior
 
 # Importar Dashboard
 * Ir em Create > Dashboard > Import, ou acessar http://servidor.grafana/dashboard/import
